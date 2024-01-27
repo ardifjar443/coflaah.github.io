@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import Navbar from "./component/navbar";
 import Product from "./component/product";
-import Footer from "./component/footer";
+import { useEffect, useState } from "react";
+
 import Jumbotron from "./component/jumbtron";
 import About from "./component/aboutme";
-import Home from "./home";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./login";
 
-function App() {
+const Home = () => {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const handleScroll = () => {
@@ -80,29 +73,18 @@ function App() {
       contohElement.scrollIntoView({ behavior: "smooth" });
     }
   };
-
   return (
-    <div>
-      <div
-        style={{ backgroundImage: 'url("./img/foto1.jpg")' }}
-        className=" bg-cover bg-fixed"
-      >
-        <Router>
-          <Navbar
-            isVisible={isVisible}
-            view={view}
-            toAbout={toAbout}
-            view2={view2}
-          />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </Router>
-        <Footer />
-      </div>
-    </div>
+    <>
+      <Jumbotron order={order} />
+      <Product order={order} />
+      <About
+        about={about}
+        setAbout={setAbout}
+        hilang={hilang}
+        setHilang={setHilang}
+      />
+    </>
   );
-}
+};
 
-export default App;
+export default Home;

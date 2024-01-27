@@ -1,6 +1,19 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getDataUser, setDatauser } from "../api/dataUser";
+import Popup from "./popup";
 
 const Navbar = (props) => {
+  const [popup, setPopup] = useState(false);
+  const navigate = useNavigate();
+  // State untuk menyimpan data pengguna
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    // Gunakan getUserData untuk mendapatkan data pengguna
+    setUserData(getDataUser());
+  }, [getDataUser()]); // useEffect hanya dijalankan saat komponen pertama kali dirender
+
   const [logo, setLogo] = useState(false);
   const [logo1, setLogo1] = useState(false);
   const scrollToTop = () => {
@@ -22,90 +35,18 @@ const Navbar = (props) => {
       setLogo1(true);
     }
   }, [props.isVisible]);
+
   return (
     <>
       <div
         className={`navbar  ${
           props.isVisible
-            ? "bg-yellow-800 animate__animated animate__fadeInDown"
+            ? "bg-yellow-800 animate__animated animate__fadeInDown rounded-b-xl"
             : " bg-transparent "
         }`}
         style={{ transitionDuration: "1.5s" }}
       >
         <div className="navbar-start">
-          <div className="dropdown">
-            <label tabIndex={0} className="btn btn-ghost btn-circle text-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h7"
-                />
-              </svg>
-            </label>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white rounded-box w-52 text-black"
-            >
-              <li>
-                <button
-                  className="hover:text-yellow-800"
-                  onClick={() => {
-                    props.view2("home");
-                  }}
-                >
-                  Homepage
-                </button>
-              </li>
-              <li>
-                <button
-                  className="hover:text-yellow-800"
-                  onClick={() => {
-                    props.view2("product");
-                  }}
-                >
-                  Product
-                </button>
-              </li>
-              <li>
-                <button
-                  className="hover:text-yellow-800"
-                  onClick={props.toAbout}
-                >
-                  About
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="navbar-center">
-          <button
-            className="btn btn-ghost  text-3xl text-white  "
-            onClick={scrollToTop}
-          >
-            <img
-              src="/img/logo.png"
-              alt=""
-              style={{ width: "15%" }}
-              className={`animate__animated ${
-                logo && !logo1
-                  ? "animate__rotateIn"
-                  : !logo && logo1
-                  ? "animate__rotateIn"
-                  : "animate__rotateOut"
-              }`}
-            />
-          </button>
-        </div>
-
-        <div className="navbar-end  ">
           <div className="dropdown ">
             <label
               tabIndex={0}
@@ -128,7 +69,7 @@ const Navbar = (props) => {
             </label>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content  z-[1]  shadow bg-white rounded-box w-fit right-1 text-black "
+              className="menu menu-sm dropdown-content  z-[1]  shadow bg-white rounded-box w-fit left-5 text-black "
             >
               <li>
                 <div className="card w-96  shadow-x bg-white hover:text-yellow-800 active:bg-yellow-600">
@@ -159,7 +100,72 @@ const Navbar = (props) => {
               </li>
             </ul>
           </div>
-          {/* <button className="btn btn-ghost btn-circle text-white">
+        </div>
+        <div className="navbar-center">
+          <button
+            className="btn btn-ghost  text-3xl text-white  "
+            onClick={scrollToTop}
+          >
+            <img
+              src="/img/logo.png"
+              alt=""
+              style={{ width: "15%" }}
+              className={`animate__animated ${
+                logo && !logo1
+                  ? "animate__rotateIn"
+                  : !logo && logo1
+                  ? "animate__rotateIn"
+                  : "animate__rotateOut"
+              }`}
+            />
+          </button>
+        </div>
+        <div className="navbar-end  ">
+          {userData ? (
+            <div>
+              <div className="flex  items-center gap-5  me-10 ">
+                <div className="dropdown dropdown-end  h-full min-h-full">
+                  <p className="text-white">{userData.username}</p>
+                </div>
+                <div className="dropdown dropdown-end">
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="btn btn-ghost btn-circle avatar"
+                  >
+                    <div className="rounded-full">
+                      <img
+                        alt="Tailwind CSS Navbar component"
+                        src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                      />
+                    </div>
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+                  >
+                    <li>
+                      <a className="justify-between">
+                        Profile
+                        <span className="badge">New</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a>Settings</a>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          setPopup(true);
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              {/* <button className="btn btn-ghost btn-circle text-white">
             <div className="indicator">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -178,8 +184,48 @@ const Navbar = (props) => {
               <span className="badge badge-xs bg-yellow-200 indicator-item"></span>
             </div>
           </button> */}
+            </div>
+          ) : (
+            <div>
+              <button
+                className="bg-amber-500 p-3 py-2 rounded-lg text-white hover:bg-amber-600"
+                onClick={() => {
+                  navigate("/login");
+                }}
+              >
+                Login
+              </button>
+            </div>
+          )}
         </div>
       </div>
+      {popup && (
+        <Popup
+          content={
+            <div className="text-black text-2xl font-bold flex gap-5 ">
+              <div className=" text-center flex items-center  ">
+                Apakah anda yakin ingin LogOut
+              </div>
+              <div className="">
+                <button
+                  className="bg-amber-900 p-2 rounded-xl text-white hover:bg-amber-950 mb-10"
+                  onClick={() => {
+                    setPopup(false);
+                  }}
+                >
+                  X
+                </button>
+              </div>
+            </div>
+          }
+          namaButton={"Tetap Logout"}
+          onClose={() => {
+            setDatauser(null);
+            navigate("/login");
+            setPopup(false);
+          }}
+        />
+      )}
     </>
   );
 };
